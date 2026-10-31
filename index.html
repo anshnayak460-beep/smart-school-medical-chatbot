@@ -1,0 +1,625 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#063b78">
+<title>SchoolMed AI | Smart School Health Assistant</title>
+
+<style>
+:root{
+  --navy:#063b78;
+  --blue:#0879df;
+  --ink:#102b58;
+  --muted:#58708f;
+  --panel:#fff;
+  --shadow:0 8px 28px rgba(14,75,139,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:linear-gradient(135deg,#edf7ff,#f7fbff 55%,#eaf5ff);
+  color:var(--ink);
+  min-height:100vh
+}
+button,input{font:inherit}
+button{cursor:pointer}
+.topbar{
+  height:82px;
+  background:linear-gradient(105deg,#064987,#06366f 65%,#07518e);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 28px;
+  box-shadow:0 4px 18px #063b7830;
+  position:relative;
+  z-index:2
+}
+.brand{display:flex;align-items:center;gap:13px}
+.brand-icon{
+  width:52px;height:52px;border-radius:15px;
+  background:linear-gradient(145deg,#fff,#b9edff);
+  display:grid;place-items:center;color:#0879df;
+  font-size:31px;box-shadow:0 5px 15px #001d493d
+}
+.brand-name{font-size:25px;font-weight:800;letter-spacing:-.5px}
+.brand-sub{font-size:12px;opacity:.82;margin-top:3px}
+.top-actions{display:flex;align-items:center;gap:18px}
+.status{
+  background:#ffffff1c;border:1px solid #ffffff35;
+  border-radius:30px;padding:9px 15px;
+  font-size:12px;font-weight:700
+}
+.profile{
+  height:40px;width:40px;border-radius:50%;
+  background:#fff;color:#07518e;
+  display:grid;place-items:center;font-size:20px
+}
+.layout{
+  display:grid;
+  grid-template-columns:250px minmax(0,1fr) 275px;
+  gap:18px;max-width:1600px;
+  margin:20px auto;padding:0 20px
+}
+.sidebar{
+  background:linear-gradient(180deg,#e1f1ff,#d5eaff);
+  border:1px solid #c9e3fb;border-radius:20px;
+  padding:20px 14px;min-height:calc(100vh - 125px);
+  box-shadow:var(--shadow);
+  display:flex;flex-direction:column
+}
+.nav{display:grid;gap:8px}
+.nav button{
+  display:flex;align-items:center;gap:13px;
+  text-align:left;border:0;background:transparent;
+  color:#123b70;border-radius:12px;
+  padding:14px 15px;font-weight:700;transition:.2s
+}
+.nav button span{font-size:20px;width:24px;text-align:center}
+.nav button:hover,.nav button.active{
+  background:linear-gradient(100deg,#0879df,#0566c5);
+  color:#fff;box-shadow:0 5px 13px #0879df45
+}
+.mascot{margin:auto 0 0;text-align:center;padding:25px 5px 8px}
+.mascot-art{
+  font-size:90px;
+  filter:drop-shadow(0 12px 10px #1677b933);
+  line-height:1.4
+}
+.mascot p{
+  font-weight:800;font-style:italic;color:#0870ce;
+  line-height:1.6;margin-top:5px
+}
+.center{min-width:0}
+.card{
+  background:var(--panel);
+  border:1px solid #d8e9fa;border-radius:21px;
+  box-shadow:var(--shadow);
+  padding:21px;margin-bottom:17px
+}
+.api-card{
+  background:linear-gradient(115deg,#fff 0%,#e8f5ff 70%,#d9f1ff 100%);
+  position:relative;overflow:hidden
+}
+.api-card:after{
+  content:"";position:absolute;width:230px;height:230px;
+  border-radius:50%;background:#4fb6ff18;
+  right:8%;top:-150px
+}
+.api-heading{
+  display:flex;align-items:center;gap:20px;
+  position:relative;z-index:1
+}
+.heart{font-size:64px;line-height:1}
+.api-copy{flex:1}
+h2{font-size:25px;letter-spacing:-.5px}
+.api-copy p{font-size:14px;color:#244d7e;margin-top:5px}
+.api-row{
+  display:flex;gap:12px;margin:10px 0 0 84px;
+  position:relative;z-index:1
+}
+input{
+  min-width:0;width:100%;border:1px solid #c9dff4;
+  border-radius:12px;padding:13px 15px;
+  background:#fff;color:#18375f;outline:none
+}
+input:focus{
+  border-color:#1689ed;
+  box-shadow:0 0 0 3px #1689ed20
+}
+.primary{
+  border:0;border-radius:12px;
+  background:linear-gradient(110deg,#0879df,#0566c5);
+  color:white;padding:13px 20px;
+  font-weight:800;box-shadow:0 5px 13px #0879df35;
+  white-space:nowrap
+}
+.primary:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.primary:disabled{opacity:.65;cursor:wait;transform:none}
+.api-note{
+  margin:9px 0 0 84px;background:#d9f9e8;
+  color:#155b3a;border-radius:10px;padding:9px 12px;
+  font-size:12px;position:relative;z-index:1
+}
+.chat-card{padding:20px 22px 15px}
+.chat-head{
+  display:flex;justify-content:space-between;
+  align-items:center;border-bottom:1px solid #e4eef8;
+  padding-bottom:14px;margin-bottom:10px
+}
+.chat-title{display:flex;align-items:center;gap:12px}
+.chat-title .bubble-icon{
+  width:42px;height:42px;border-radius:50%;
+  display:grid;place-items:center;
+  background:#e9e7ff;color:#6758e8;font-size:22px
+}
+.chat-title h2{font-size:21px}
+.chat-title p{font-size:13px;color:var(--muted);margin-top:4px}
+.clear-btn{
+  background:#fff0f1;color:#df3546;
+  border:0;border-radius:30px;
+  padding:11px 16px;font-weight:700
+}
+.chat-box{
+  height:390px;overflow-y:auto;padding:12px 4px 10px;
+  scroll-behavior:smooth
+}
+.message-row{
+  display:flex;align-items:flex-end;gap:10px;
+  margin:8px 0 14px
+}
+.message-row.user-row{justify-content:flex-end}
+.avatar{
+  width:36px;height:36px;flex:0 0 36px;
+  border-radius:50%;
+  background:linear-gradient(145deg,#5dc9ff,#0879df);
+  display:grid;place-items:center;color:white;font-size:18px
+}
+.message{
+  max-width:78%;padding:13px 16px;
+  border-radius:16px;line-height:1.55;
+  font-size:14px;white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  box-shadow:0 2px 8px #154d7b0b
+}
+.bot{
+  background:linear-gradient(120deg,#e7f4ff,#dceeff);
+  color:#123b70;border-bottom-left-radius:4px
+}
+.user{
+  background:linear-gradient(110deg,#0879df,#075fbd);
+  color:#fff;border-bottom-right-radius:4px
+}
+.composer{
+  display:flex;gap:10px;padding-top:10px;
+  border-top:1px solid #e8f0f8
+}
+.composer input{height:47px}
+.send-btn{min-width:105px}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.quick button{
+  border:1px solid #d8e9fa;background:#eaf5ff;
+  color:#124477;border-radius:30px;
+  padding:9px 13px;font-size:12px;font-weight:700
+}
+.quick button:hover{background:#d5eaff}
+.rightbar{min-width:0}
+.feature-card h2{
+  font-size:20px;padding-bottom:15px;
+  border-bottom:1px solid #e0edf8
+}
+.feature{display:flex;align-items:center;gap:12px;margin-top:15px}
+.feature-icon{
+  width:46px;height:46px;border-radius:50%;
+  display:grid;place-items:center;font-size:21px;
+  background:#e4efff;flex:0 0 46px
+}
+.feature strong{font-size:14px;display:block}
+.feature small{
+  display:block;color:#527096;font-size:12px;margin-top:4px
+}
+.promo{
+  background:linear-gradient(140deg,#baf5e9,#d8ffc9);
+  text-align:center;padding:24px 15px;border:0
+}
+.promo .pulse{font-size:50px;color:#086b8d}
+.promo h2{font-size:21px;margin:8px 0}
+.promo p{
+  font-size:13px;font-weight:700;color:#12527a;
+  font-style:italic;margin-top:8px
+}
+.safety{font-size:12px;color:#5d7088;line-height:1.7}
+.safety h3{font-size:15px;color:#183b68;margin-bottom:7px}
+footer{
+  background:#063b78;color:#e8f4ff;padding:15px 25px;
+  display:flex;justify-content:space-between;
+  gap:10px;font-size:12px;margin-top:4px
+}
+footer span:last-child{opacity:.85}
+
+@media(max-width:1150px){
+  .layout{grid-template-columns:210px minmax(0,1fr)}
+  .rightbar{
+    grid-column:2;display:grid;
+    grid-template-columns:1fr 1fr;gap:14px
+  }
+  .rightbar .card{margin-bottom:0}
+  .sidebar{grid-row:1 / span 2}
+}
+@media(max-width:760px){
+  .topbar{height:70px;padding:0 15px}
+  .brand-name{font-size:20px}
+  .brand-icon{width:43px;height:43px;font-size:25px}
+  .brand-sub{font-size:10px}
+  .layout{
+    display:flex;flex-direction:column;
+    padding:0 12px;margin:12px auto
+  }
+  .sidebar{min-height:0;padding:10px;border-radius:15px}
+  .nav{display:flex;overflow-x:auto}
+  .nav button{white-space:nowrap;padding:11px 13px}
+  .mascot{display:none}
+  .rightbar{display:grid;grid-template-columns:1fr}
+  .api-row{margin-left:0}
+  .api-note{margin-left:0}
+  .heart{font-size:42px}
+  .api-copy h2{font-size:20px}
+  .api-heading{gap:12px}
+  .card{padding:16px}
+  .chat-card{padding:15px}
+  .chat-box{height:52vh;min-height:300px}
+  .message{max-width:88%;font-size:13px}
+  .chat-title h2{font-size:18px}
+  .chat-title p{font-size:11px}
+  .clear-btn{padding:9px 11px;font-size:12px}
+  .composer{gap:7px}
+  .send-btn{min-width:76px;padding:12px}
+  footer{flex-direction:column;text-align:center}
+}
+@media(max-width:420px){
+  .status{font-size:10px;padding:7px 9px}
+  .profile{display:none}
+  .api-heading{align-items:flex-start}
+  .heart{font-size:34px}
+  .api-copy h2{font-size:18px}
+  .api-row{flex-direction:column}
+  .api-row .primary{width:100%}
+  .chat-title p{max-width:175px}
+  .quick button{font-size:11px}
+}
+</style>
+</head>
+
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-icon">✚</div>
+    <div>
+      <div class="brand-name">SchoolMed AI</div>
+      <div class="brand-sub">Smart School Medical Assistant</div>
+    </div>
+  </div>
+  <div class="top-actions">
+    <div class="status" id="status">● Not Connected</div>
+    <div class="profile">👤</div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <nav class="nav" aria-label="Main navigation">
+      <button class="active" onclick="showSection('home',this)">
+        <span>⌂</span>Home
+      </button>
+      <button onclick="showSection('assistant',this)">
+        <span>🩺</span>Health Assistant
+      </button>
+      <button onclick="quickAsk('Share some useful daily health tips for school students.')">
+        <span>💡</span>Health Tips
+      </button>
+      <button onclick="quickAsk('Explain basic first aid and when to get adult help.')">
+        <span>✚</span>First Aid
+      </button>
+      <button onclick="document.getElementById('safety').scrollIntoView({behavior:'smooth'})">
+        <span>ⓘ</span>About & Safety
+      </button>
+    </nav>
+    <div class="mascot">
+      <div class="mascot-art">🤖🩺</div>
+      <p>Healthy Students...<br>Healthy Future...</p>
+      <div style="font-size:30px;margin-top:12px">〰️💙</div>
+    </div>
+  </aside>
+
+  <main class="center" id="home">
+    <section class="card api-card">
+      <div class="api-heading">
+        <div class="heart">💙</div>
+        <div class="api-copy">
+          <h2>Connect Secure AI Server</h2>
+          <p>Connect your Cloudflare Worker to start using SchoolMed AI</p>
+        </div>
+      </div>
+
+      <div class="api-row">
+        <input type="url" id="workerUrl"
+          placeholder="Paste your Cloudflare Worker URL"
+          autocomplete="url" aria-label="Cloudflare Worker URL">
+        <button class="primary" id="connectBtn" onclick="connectAPI()">
+          🚀 Connect
+        </button>
+      </div>
+
+      <p class="api-note">
+        🔒 Your Groq API key is kept securely as a Cloudflare Worker secret.
+        Never paste your secret API key into this website.
+      </p>
+    </section>
+
+    <section class="card chat-card" id="assistant">
+      <div class="chat-head">
+        <div class="chat-title">
+          <div class="bubble-icon">💬</div>
+          <div>
+            <h2>Health Assistant</h2>
+            <p>Ask anything about health, nutrition, fitness or first aid</p>
+          </div>
+        </div>
+        <button class="clear-btn" onclick="clearChat()">▤ &nbsp;Clear Chat</button>
+      </div>
+
+      <div class="chat-box" id="chat" aria-live="polite">
+        <div class="message-row">
+          <div class="avatar">🤖</div>
+          <div class="message bot">नमस्ते! 👋
+
+मैं SchoolMed AI हूँ।
+
+मैं तुम्हें स्कूल हेल्थ, सामान्य स्वास्थ्य, स्वच्छता और स्वास्थ्य शिक्षा से जुड़ी जानकारी देने में मदद कर सकता हूँ।
+
+बताओ, तुम्हारा सवाल क्या है?</div>
+        </div>
+      </div>
+
+      <div class="composer">
+        <input type="text" id="question"
+          placeholder="✎  Ask your health question..."
+          onkeydown="if(event.key==='Enter') sendMessage()"
+          aria-label="Your health question">
+        <button class="primary send-btn" id="sendBtn" onclick="sendMessage()">
+          ➤ &nbsp;Send
+        </button>
+      </div>
+
+      <div class="quick">
+        <button onclick="quickAsk('What is personal hygiene?')">🟢 Personal Hygiene</button>
+        <button onclick="quickAsk('Explain healthy food habits.')">🍎 Healthy Food</button>
+        <button onclick="quickAsk('What is first aid?')">✚ First Aid</button>
+        <button onclick="quickAsk('How can students prevent infections?')">🛡 Infection Prevention</button>
+      </div>
+    </section>
+
+    <section class="card safety" id="safety">
+      <h3>🛡 Medical Safety Notice</h3>
+      This chatbot provides educational information only. It cannot diagnose
+      diseases, prescribe medicines or replace a qualified healthcare
+      professional. For health problems, consult a doctor and inform your
+      parent, guardian or school nurse. For a serious or sudden medical
+      emergency, immediately seek adult help and call India's emergency
+      number 112.
+    </section>
+  </main>
+
+  <aside class="rightbar">
+    <section class="card feature-card">
+      <h2>❤️ Health Features</h2>
+      <div class="feature">
+        <div class="feature-icon">🩺</div>
+        <div><strong>Health Assistant</strong><small>Get instant health education</small></div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">💡</div>
+        <div><strong>Health Tips</strong><small>Daily wellness tips</small></div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">✚</div>
+        <div><strong>First Aid Guide</strong><small>Learn when to seek help</small></div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🏃</div>
+        <div><strong>Fitness Advice</strong><small>Healthy activity habits</small></div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🍎</div>
+        <div><strong>Nutrition Guide</strong><small>Balanced food education</small></div>
+      </div>
+    </section>
+
+    <section class="card promo">
+      <div class="pulse">💓</div>
+      <h2>Good Health<br>Good Learning!</h2>
+      <p>Stay Healthy, Stay Happy</p>
+      <div style="font-size:27px;margin-top:12px">🌿</div>
+    </section>
+  </aside>
+</div>
+
+<footer>
+  <span>© 2026 SchoolMed AI &nbsp;|&nbsp; Smart School Health Assistant</span>
+  <span>🛡 Safe &nbsp;•&nbsp; Private &nbsp;•&nbsp; Reliable</span>
+</footer>
+
+<script>
+let WORKER_URL = "";
+let history = [];
+
+function normalizeWorkerUrl(value){
+  return value.trim().replace(/\/$/, "");
+}
+
+async function connectAPI(){
+  const field = document.getElementById("workerUrl");
+  const button = document.getElementById("connectBtn");
+  const candidate = normalizeWorkerUrl(field.value);
+
+  if(!candidate){
+    alert("Please paste your deployed Cloudflare Worker URL.");
+    return;
+  }
+
+  try{
+    new URL(candidate);
+  }catch(_){
+    alert("Please enter a valid Worker URL.");
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Checking…";
+
+  try{
+    const response = await fetch(candidate + "/health");
+    const data = await response.json();
+
+    if(!response.ok || data.status !== "ok"){
+      throw new Error(data.error || "Worker health check failed");
+    }
+
+    WORKER_URL = candidate;
+
+    const status = document.getElementById("status");
+    status.textContent = "● AI Server Connected";
+    status.style.background = "#0c9b6540";
+    status.style.borderColor = "#75e7ac";
+
+    alert("Secure AI server connected successfully!");
+
+  }catch(error){
+    WORKER_URL = "";
+    alert("Could not connect to Worker: " + error.message +
+      "\nCheck the Worker URL and deploy the Worker code.");
+  }finally{
+    button.disabled = false;
+    button.textContent = "🚀 Connect";
+  }
+}
+
+function addMessage(text,type){
+  const chat = document.getElementById("chat");
+  const row = document.createElement("div");
+
+  row.className = "message-row" +
+    (type === "user" ? " user-row" : "");
+
+  if(type !== "user"){
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.textContent = "🤖";
+    row.appendChild(avatar);
+  }
+
+  const bubble = document.createElement("div");
+  bubble.className = "message " + type;
+  bubble.textContent = text;
+
+  row.appendChild(bubble);
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function quickAsk(text){
+  document.getElementById("question").value = text;
+  sendMessage();
+}
+
+function showSection(id,button){
+  document.getElementById(id)?.scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+
+  document.querySelectorAll(".nav button")
+    .forEach(b=>b.classList.remove("active"));
+
+  if(button) button.classList.add("active");
+}
+
+async function sendMessage(){
+  const input = document.getElementById("question");
+  const btn = document.getElementById("sendBtn");
+  const text = input.value.trim();
+
+  if(!WORKER_URL){
+    alert("First connect your secure AI server using the Worker URL.");
+    return;
+  }
+
+  if(!text || btn.disabled) return;
+
+  addMessage(text,"user");
+  input.value = "";
+  btn.disabled = true;
+  btn.textContent = "…";
+
+  const messages = [
+    ...history,
+    {role:"user",content:text}
+  ];
+
+  try{
+    const response = await fetch(WORKER_URL + "/chat",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({messages})
+    });
+
+    const data = await response.json();
+
+    if(!response.ok){
+      throw new Error(data.error || "AI request failed");
+    }
+
+    const reply = data.choices?.[0]?.message?.content;
+
+    if(!reply){
+      throw new Error("The AI returned an empty response.");
+    }
+
+    history.push(
+      {role:"user",content:text},
+      {role:"assistant",content:reply}
+    );
+
+    if(history.length > 20){
+      history = history.slice(-20);
+    }
+
+    addMessage(reply,"bot");
+
+  }catch(error){
+    addMessage(
+      "Error: " + error.message +
+      "\n\nPlease check your Worker deployment and internet connection.",
+      "bot"
+    );
+  }finally{
+    btn.disabled = false;
+    btn.textContent = "➤  Send";
+    input.focus();
+  }
+}
+
+function clearChat(){
+  history = [];
+  document.getElementById("chat").innerHTML = "";
+
+  addMessage(
+    "Chat cleared! नमस्ते! अपना स्वास्थ्य संबंधी सवाल पूछें।",
+    "bot"
+  );
+}
+</script>
+</body>
+</html>
